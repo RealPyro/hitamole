@@ -11,6 +11,12 @@
 		background:#341f0a;
 		margin: 0;
 	}
+	#preloadedImages {
+       width: 0px;
+       height: 0px;
+       display: inline;
+       background-image: url(die.gif);
+	}
 	h1,h2,h3{
 		text-align:center;
 		text-transform:uppercase;
@@ -140,6 +146,7 @@
 	<section id="game">
 	<span id="countTime"></span>
 	<a href="#!" onclick="ready();this.style.visibility='hidden';" id="restart"></a>
+	<div id="preloadedImages"></div>
 	<game>
 		<pit x="0" y="0" status="blank" onclick="hit(this)"></pit>
 		<pit x="1" y="0" status="blank" onclick="hit(this)"></pit>
