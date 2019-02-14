@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		Unit 5 - A1 - 61070260
+	</title>
+	<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+	<style type="text/css">
+	body {
+		font-family: 'Press Start 2P', cursive;
+		background:#341f0a;
+		margin: 0;
+	}
+	h1,h2,h3{
+		text-align:center;
+		text-transform:uppercase;
+
+	}
+	#top, #bottom{
+		margin: 0;
+		padding: 0;
+		color: #fff;
+	}
+	#gameTitle {
+		animation: scaleTitle 1s alternate infinite linear;
+		text-shadow:
+		-1px -1px 0 #c87939,
+		1px -1px 0 #c87939,
+		-1px 1px 0 #c87939,
+		1px 1px 0 #c87939;
+		-webkit-font-smoothing: antialiased
+	}
+	#game{
+		position: relative;
+		background: #c87939;
+		padding: 1em;
+	}
+	#countTime {
+		color: #fff;
+		position: absolute;
+		z-index: 9;
+		font-size: 6em;
+		display: block;
+		padding: 2em;
+		user-select: none;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%)
+	}
+	#restart {
+		color: #fff;
+		position: absolute;
+		z-index: 9;
+		font-size: 3em;
+		visibility: hidden;
+		padding: 3em;
+		line-height: 1.5em;
+		user-select: none;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		text-decoration: none;
+		text-align: center;
+	}
+	game{
+		display:block;
+		margin:-4px auto;
+		background: url(bg.png);
+		background-size: 40%;
+		width:400px;
+		height:400px;
+		position:relative;
+		border-radius:10px;
+		overflow:hidden;
+		cursor: url(hammer.png), auto;
+		border: 4px solid #341f0a;
+	}
+	pit{
+		display:block;
+		width:100px;
+		height:100px;
+		position:absolute;
+		left:0px;
+		top:0px;
+	}
+
+
+
+	/*  แก้เฉพาะด้านล่างเอง */
+
+	pit[y="1"]{
+		top:100px;
+	}
+	pit[y="2"]{
+		top:200px;
+	}
+	pit[y="3"]{
+		top:300px;
+	}
+	pit[x="1"]{
+		left:100px;
+	}
+	pit[x="2"]{
+		left:200px;
+	}
+	pit[x="3"]{
+		left:300px;
+	}
+	pit{
+		background-repeat: no-repeat;
+		background-position: center top;
+		background-size: 90%;
+		background-image: url(pit.png);
+	}
+	pit[status="mole"]{
+		background-image: url(mole.png);
+	}
+	pit[status="die"]{
+		background-image: url(die.gif);
+	}
+	pit[status="miss"]{
+		background-image: url(x.png);
+	}
+	@keyframes scaleTitle {
+  0%   {transform: scale(.85);letter-spacing: 2px;}
+  100% {transform: scale(1);letter-spacing: 0;}
+	}
+</style>
+</head>
+<body>
+	<section id="top">
+	<h1 id="gameTitle" >Hit The Mole!</h1>
+	<h3 id="subTitle">READY!</h3>
+	</section>
+	<!-- 
+		กล่องตารางเกม
+		สถานะของตุ่นที่จะอยู่ใน pit ได้แก่
+		1.blank (ไม่มีตุ่น) 2.mole (มีตุ่น) 3.die (ตีโดน) 4.miss (ตีผิด)
+	-->
+	<section id="game">
+	<span id="countTime"></span>
+	<a href="#!" onclick="ready();this.style.visibility='hidden';" id="restart"></a>
+	<game>
+		<pit x="0" y="0" status="blank" onclick="hit(this)"></pit>
+		<pit x="1" y="0" status="blank" onclick="hit(this)"></pit>
+		<pit x="2" y="0" status="blank" onclick="hit(this)"></pit>
+		<pit x="3" y="0" status="blank" onclick="hit(this)"></pit>
+		<pit x="0" y="1" status="blank" onclick="hit(this)"></pit>
+		<pit x="1" y="1" status="blank" onclick="hit(this)"></pit>
+		<pit x="2" y="1" status="blank" onclick="hit(this)"></pit>
+		<pit x="3" y="1" status="blank" onclick="hit(this)"></pit>
+		<pit x="0" y="2" status="blank" onclick="hit(this)"></pit>
+		<pit x="1" y="2" status="blank" onclick="hit(this)"></pit>
+		<pit x="2" y="2" status="blank" onclick="hit(this)"></pit>
+		<pit x="3" y="2" status="blank" onclick="hit(this)"></pit>
+		<pit x="0" y="3" status="blank" onclick="hit(this)"></pit>
+		<pit x="1" y="3" status="blank" onclick="hit(this)"></pit>
+		<pit x="2" y="3" status="blank" onclick="hit(this)"></pit>
+		<pit x="3" y="3" status="blank" onclick="hit(this)"></pit>
+	</game>
+	</section>
+	
+	<section id="bottom">
+	<!-- ตัวนับถอยหลัง -->
+
+	<h2>Time: <span id="theTime">10</span></h2>
+
+	<!-- นับคะแนน -->
+	<h2>score: <span id="theScore">0</span></h2>
+	</section>
+	<audio autoplay id="bgm" preload="auto" loop>
+	<source src="bgm.mp3" type="audio/ogg">
+	</audio>
+	<audio id="count" preload="auto">
+	<source src="count.mp3" type="audio/ogg">
+	</audio>
+	<audio id="hit" preload="auto">
+	<source src="hit.wav" type="audio/ogg">
+	</audio>
+	<audio id="miss" preload="auto">
+	<source src="miss.wav" type="audio/ogg">
+	</audio>
+
+	<script>
+	// เรียกกล่อง pit ทุก pit มาให้ js ใช้งาน
+	pits = document.querySelectorAll('pit');
+
+	// เวลาในการเตรียมตัว (s)
+	preparing = 5;
+	// ระยะเวลาที่ตุ่นจะเกิด (ms)
+	birth = 800;
+	// ระยะเวลาที่ตุ่นจะอยู่รอโดนตี (ms)
+	delay = 2000;
+
+	//ฟังก์ชันหลังโหลดเว็บเสร็จ จะนับถอยหลัง 5 วินาที แล้วเริ่มเกม
+	function ready(){
+		// คะแนนเริ่มต้น
+		score = 0;
+		// เวลาในการเล่นเกม (s)
+		time = 30;
+
+		// รีเซ็ทเวลา
+		updateTime();
+		// รีเซ็ทคะแนนให้คนดู
+		updatScore();
+		// reset ทุกหลุมให้ว่าง
+		for (var i = 0; i < pits.length; i++) {
+			pits[i].setAttribute("status","blank");
+		}
+
+		for (let i = 0; i < preparing; i++) {
+			setTimeout(
+				function(){
+					console.log(i);
+					subTitle.innerText = "Game starts in ";
+					countTime.innerText = (preparing-i);
+					countTime.style.display = "block";
+				},i*1000);
+		}
+		// หมดเวลาเตรียมตัว เรื่มเกมได้!
+		setTimeout(
+			function(){
+				subTitle.innerText = "Play!";
+				countTime.innerText = "";
+				countTime.style.display = "none";
+				countdown();
+				reloadMole();
+			}
+			,preparing*1000);
+	}
+
+	// สำหรับสั่งให้เวลาลด
+	function countdown(){
+		// ทุกๆ 1 วินาที เวลาต้องลด
+		cd = setInterval(
+			function(){
+				// ถ้ายังไม่หมดเวลา
+				if (time > 0) {
+					// ลดเวลา
+					time--;
+					// อัพเดทเวลา
+					updateTime();
+				}
+				// ถ้าหมดเวลา
+				else{
+					clearInterval(cd);
+					console.log("END");
+				}
+			}
+			,1000)
+	}
+
+	// ฟังก์ชันเกม โดยจะคอยเรียกตัวเองจนกว่าจะตาย หลักการคือ ทุกๆ เวลา birth จะมีตุ่นโผล่หน้ามา โดยสุ่มว่าจะเกิดที่ไหน จากนั้นจะรอใหโดนตีตามเวลา delay ถ้าหมดเวลา delay ยังไม่โดนตี จะหายไป 
+	function reloadMole(){
+		// ถ้าเวลาไม่หมด ให้ทำตามนี
+		if (time>0) {
+			// สุ่มเลขหลุมที่จะเกิด ตั้งแต่เลข 0 ถึง 15
+			var randomPit = Math.floor(Math.random() * 16);
+
+			// ตั้ง status ให้หลุมที่สุ่มได้ เป็นตุ่นโผล่มา
+			pits[randomPit].setAttribute("status","mole");
+
+			// ตั้งเวลาว่า เมื่อหมดเวลา ตุ่นจะหายไป
+			setTimeout(
+				function(){
+					// ถ้าเวลายังไม่หมด ตุ่่นจะหาย
+					if (time>0) {
+						pits[randomPit].setAttribute("status","blank");
+					}
+				}
+				,delay);
+			// กำหนดหน่วงเวลาไว้ พอหมดเวลา ให้แรนดอมตุ่นออกมาต่ออีกรอบ
+			setTimeout(
+				function(){
+				// เรียกตัวเอง
+				reloadMole()
+			}
+			,birth);
+		}
+	}
+
+    // สำหรับการตี
+    function hit(pit){
+    	// ตีได้ต่อเมื่อไม่หมดเวลา
+    	if (time>0) {
+    		// ดูว่า  status ตอนนี้คืออะไร
+    		var status = pit.getAttribute("status");
+    		// ถ้าตีโดนตุ่น ปรับเป็น die
+    		if (status == "mole") {
+    			pit.setAttribute("status","die");
+    			// กดถูกได้คะแนน
+    			score++;
+				sound('hit');
+    		}
+    		// ถ้าตีโดน blank จะกลายเป็น miss
+    		else if(status == "blank"){
+    			pit.setAttribute("status","miss");
+    			// กดิดติดลบ
+    			score--;
+				sound('miss');
+    		}
+    		// แสดงคะแนนให้คนดู
+    		updatScore();
+    	}
+    }
+
+    // สำรหรับโชว์คะแนน
+    function updatScore(){
+    	// แสดงคะแนนให้คนดู
+    	theScore.innerText = score;
+    }
+
+    //สำหรับโชว์เวลา
+    function updateTime(){
+    	// แสดงเวลา
+    	theTime.innerText = time;
+
+    	// ถ้าหมดเวลา ให้บอก
+    	if (time == 0) {
+    		subTitle.innerHTML = "Time out!";
+			restart.innerHTML = "Play again";
+			restart.style.visibility = "visible";
+    	}
+    }
+
+    function sound(id){
+    	document.getElementById(id).play();
+    }
+  var audio = document.getElementById("bgm");
+  audio.volume = 0.3;
+
+   	window.onload = function(){
+   		ready();
+   	}
+</script>
+</body>
+</html> 
